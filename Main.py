@@ -4,12 +4,22 @@ import gzip
 import io
 from bs4 import BeautifulSoup
 
+'''
+This script is used to download data published from the GAIA international telescope, located here:
+https://gea.esac.esa.int/archive/
+This site contains hundreds of gigabytes of relatively raw data from the GAIA telescope.  This script downloads a large 
+amount of it, and strips off the data that this project doesn't use.
+
+This script could be made to run faster through use of Asyncio or some other threading, but this proposal was discarded 
+in favor of not using up too much bandwidth from the host server.  This will take a long time to run.
+'''
+
 
 def import_data(base_url: str, url: str, file_writer, number=0):
     url = str(base_url) + url
     # Get .gz file from URL
     r = requests.get(url, allow_redirects=True)
-    # Decompress .gz in memory
+    # Decompress .gz in memory, which is much faster than writing to disc first
     compressed_file = io.BytesIO(r.content)
     decompressed_file = gzip.open(compressed_file, mode='rt')
     csv_table = csv.reader(decompressed_file)
@@ -41,7 +51,7 @@ def create_csv(file_name, size):
     f = requests.get(base_link)
     page = f.text
     soup = BeautifulSoup(page, "html.parser").findAll('a')
-    # The first link is just a thing to go back to the previous page
+    # The first link is just a thing to go back to the previous page, so it is deleted
     del soup[0]
     with open(file_name, 'w') as csv_file:
         file_writer = csv.writer(csv_file, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
@@ -60,5 +70,7 @@ def create_csv(file_name, size):
 
 if __name__ == "__main__":
     input("This download will take a long time.  Press anything to continue.")
+    # 400 is the number of CSV files to download.  400 was chosen as a sufficiently large number that wouldn't take too
+    # long.
     create_csv('GAIA_DATA.csv', 400)
     create_csv('GAIA_DATA_small.csv', 1)
