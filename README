@@ -1,0 +1,18 @@
+This software is used to download data published from the GAIA astronomical telescope.  The entire dataset is hundreds of
+gigabytes large, so this program only downloads and analyszes a small sample of it.  Running the main.py script
+downloads the first 400 files from the website, and scrapes the relevant data while discrading the rest.  The file size on disk is
+~160 MB, along with a smaller sample of the data that is used for clustering analysis.
+
+Linear and quadratic regression is run on the main smaple of the data.  Some hyperparameter
+tuning is done for the qudratic regression, up to 9 degrees of freedom.  The correlations are simply printed out.
+
+A plot of temperature vs. luminosity is output to demonstrate the correlation that is present but under represented
+by the numbers alone.
+
+Finally, K-means cluster analysis is done on the small subset of the data.
+
+Main.py is the file that scrapes and cleans the data from http://cdn.gea.esac.esa.int/Gaia/gdr2/gaia_source/csv/.
+It selects 9 columns from the CSV files from the website and creates a new CSV file used for testing. plots.py creates
+the graphs and analyzes the data created from Main.py for our project. To run these files, Python 3 must be installed.
+First run Main.py first to create the CSV file of data, then run plots.py to get the analysis number as well as the graphs
+for the data. This project does not have a demo to run.
